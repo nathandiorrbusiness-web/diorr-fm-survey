@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diorr FM — Quick Survey</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;600&display=swap');
+
+    @font-face {
+      font-family: 'Bank Gothic';
+      src: url('BankGothicLight.otf') format('opentype');
+      font-weight: 300;
+      font-style: normal;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      background: #0a0a0f;
+      color: #e8e0f0;
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* ambient glow */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -30%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(147, 78, 172, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 520px;
+      width: 100%;
+      position: relative;
+      z-index: 2;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .brand {
+      font-family: 'Bank Gothic', sans-serif;
+      font-size: 14px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #b87fd4;
+      margin-bottom: 24px;
+    }
+
+    .title {
+      font-family: 'Bank Gothic', sans-serif;
+      font-size: 28px;
+      font-weight: 300;
+      line-height: 1.3;
+      color: #f0e6f6;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #8a7f96;
+      line-height: 1.6;
+    }
+
+    .divider {
+      width: 40px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #b87fd4, transparent);
+      margin: 32px auto;
+    }
+
+    /* email field */
+    .email-section {
+      margin-bottom: 36px;
+    }
+
+    .email-label {
+      font-size: 13px;
+      color: #8a7f96;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .email-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(184, 127, 212, 0.15);
+      border-radius: 8px;
+      color: #e8e0f0;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 300;
+      outline: none;
+      transition: border-color 0.3s, background 0.3s;
+    }
+
+    .email-input::placeholder { color: #4a4358; }
+    .email-input:focus {
+      border-color: rgba(184, 127, 212, 0.4);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    /* questions */
+    .question-block {
+      margin-bottom: 36px;
+    }
+
+    .question-number {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #6b5f7a;
+      margin-bottom: 8px;
+    }
+
+    .question-text {
+      font-size: 16px;
+      font-weight: 400;
+      color: #d4c8e0;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .option {
+      position: relative;
+    }
+
+    .option input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .option label {
+      display: block;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      font-size: 14px;
+      color: #a89bb8;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .option label:hover {
+      background: rgba(184, 127, 212, 0.06);
+      border-color: rgba(184, 127, 212, 0.2);
+      color: #d4c8e0;
+    }
+
+    .option input[type="radio"]:checked + label {
+      background: rgba(184, 127, 212, 0.1);
+      border-color: rgba(184, 127, 212, 0.35);
+      color: #e8daf2;
+    }
+
+    /* submit */
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #934eac, #7a3d94);
+      border: none;
+      border-radius: 8px;
+      color: #f0e6f6;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 12px;
+    }
+
+    .submit-btn:hover {
+      background: linear-gradient(135deg, #a35abd, #8a49a6);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(147, 78, 172, 0.2);
+    }
+
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* thank you state */
+    .thank-you {
+      display: none;
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .thank-you.visible {
+      display: block;
+    }
+
+    .thank-you h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      font-weight: 400;
+      color: #f0e6f6;
+      margin-bottom: 16px;
+    }
+
+    .thank-you p {
+      font-size: 15px;
+      color: #8a7f96;
+      line-height: 1.6;
+    }
+
+    .form-content.hidden {
+      display: none;
+    }
+
+    /* error */
+    .error-msg {
+      color: #d4587a;
+      font-size: 13px;
+      margin-top: 8px;
+      display: none;
+    }
+
+    .error-msg.visible { display: block; }
+
+    .footer {
+      text-align: center;
+      margin-top: 48px;
+      font-size: 12px;
+      color: #3d3548;
+    }
+
+    @media (max-width: 480px) {
+      .title { font-size: 24px; }
+      body { padding: 24px 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="form-content" id="formContent">
+      <div class="header">
+        <div class="brand">Diorr FM</div>
+        <h1 class="title">Thanks for the support</h1>
+        <p class="subtitle">Got 60 seconds? These 5 quick questions help me make better beats for you.</p>
+      </div>
+
+      <div class="divider"></div>
+
+      <form id="surveyForm">
+        <div class="email-section">
+          <label class="email-label">Your email (so I know who you are)</label>
+          <input type="email" class="email-input" id="email" placeholder="the email you bought with" required>
+        </div>
+
+        <!-- Q1 -->
+        <div class="question-block">
+          <div class="question-number">Question 01</div>
+          <div class="question-text">At what point do you usually purchase beats?</div>
+          <div class="options">
+            <div class="option">
+              <input type="radio" name="q1" id="q1a" value="As soon as I hear something I love" required>
+              <label for="q1a">As soon as I hear something I love</label>
+            </div>
+            <div class="option">
+              <input type="radio" name="q1" id="q1b" value="When I've written the song">
+              <label for="q1b">When I've written the song</label>
+            </div>
+            <div class="option">
+              <input type="radio" name="q1" id="q1c" value="When it's recorded">
+              <label for="q1c">When it's recorded</label>
+            </div>
+            <div class="option">
+              <input type="radio" name="q1" id="q1d" value="When I'm about to release">
+              <label for="q1d">When I'm about to release</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="question-block">
+          <div class="question-number">Question 02</div>
+          <div class="question-text">How long does it typically take you to buy a beat after first hearing it?</div>
+          <div class="options">
+            <div class="option">
+              <input type="radio" name="q2" id="q2a" value="A few days" required>
+              <label for="q2a">A few days</label>
+            </div>
+            <div class="option">
+              <input type="radio" name="q2" id="q2b" value="1-2 weeks">
+              <label for="q2b">1–2 weeks</label>
+            </div>
+            <div class="option">
+              <input type="radio" name="q2" id="q2c" value="A month">
+              <label for="q2c">A month</label>
+            </div>
+            <div class="option">
+              <input type="radio" name="q2" id="q2d" value="2 months">
+              <label for="q2d">2 months</label>
+            </div>
+            <div class="option">
+              <input type="radio" name="q2" id="q2e" value="2+ months">
+              <label for="q2e">2+ months</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="question-block">
+          <div class="question-number">Question 03</div>
+          <div class="question-text">How did you first find Nathandiorr?</div>
+          <div class="options">
+            <div class="option">
+              <input type="radio" name="q3" id="q3a" value="YouTube search" required>
+              <label for="q3a">YouTube search</label>
+            </div>
+            <div class="option">
+              <input type="radio" name="q3" id="q3b" value="YouTube recommended">
+              <label for="q3b">YouTube recommended</label>
+            </div>
+            <div class="option">
+              <input type="radio" name="q3" id="q3c" value="BeatStars search">
+              <label for="q3c">BeatStars search</label>
+            </div>
+            <div class="option">
+              <input type="radio" name="q3" id="q3d" value="Someone shared a link">
+              <label for="q3d">Someone shared a link</label>
+            </div>
+            <div class="option">
+              <input type="radio" name="q3" id="q3e" value="Social media">
+              <label for="q3e">Social media</label>
+            </div>
+            <div class="option">
+              <input type="radio" name="q3" id="q3f" value="Other">
+              <label for="q3f">Other</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="question-block">
+          <div class="question-number">Question 04</div>
+          <div class="question-text">What makes you come back to the same producer?</div>
+          <div class="options">
+            <div class="option">
+              <input type="radio" name="q4" id="q4a" value="Consistent sound I can't find elsewhere" required>
+              <label for="q4a">Consistent sound I can't find elsewhere</label>
+            </div>
+            <div class="option">
+              <input type="radio" name="q4" id="q4b" value="Good experience last time">
+              <label for="q4b">Good experience last time</label>
+            </div>
+            <div class="option">
+              <input type="radio" name="q4" id="q4c" value="Price">
+              <label for="q4c">Price</label>
+            </div>
+            <div class="option">
+              <input type="radio" name="q4" id="q4d" value="They actually communicate with me">
+              <label for="q4d">They actually communicate with me</label>
+            </div>
+            <div class="option">
+              <input type="radio" name="q4" id="q4e" value="I just check in when I need beats">
+              <label for="q4e">I just check in when I need beats</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Q5 -->
+        <div class="question-block">
+          <div class="question-number">Question 05</div>
+          <div class="question-text">What's your biggest frustration when buying beats?</div>
+          <div class="options">
+            <div class="option">
+              <input type="radio" name="q5" id="q5a" value="Hard to find the right vibe" required>
+              <label for="q5a">Hard to find the right vibe</label>
+            </div>
+            <div class="option">
+              <input type="radio" name="q5" id="q5b" value="Too expensive">
+              <label for="q5b">Too expensive</label>
+            </div>
+            <div class="option">
+              <input type="radio" name="q5" id="q5c" value="Licensing is confusing">
+              <label for="q5c">Licensing is confusing</label>
+            </div>
+            <div class="option">
+              <input type="radio" name="q5" id="q5d" value="Can't preview beats properly">
+              <label for="q5d">Can't preview beats properly</label>
+            </div>
+            <div class="option">
+              <input type="radio" name="q5" id="q5e" value="No relationship with the producer">
+              <label for="q5e">No relationship with the producer</label>
+            </div>
+          </div>
+        </div>
+
+        <p class="error-msg" id="errorMsg">Please answer all questions and enter your email.</p>
+        <button type="submit" class="submit-btn" id="submitBtn">Send it</button>
+      </form>
+
+      <div class="footer">This takes 60 seconds. Your answers stay between us.</div>
+    </div>
+
+    <div class="thank-you" id="thankYou">
+      <h2>Appreciate you</h2>
+      <p>This genuinely helps me make better music for you. Talk soon.</p>
+      <div class="divider" style="margin-top: 32px;"></div>
+      <p style="margin-top: 24px; font-size: 13px;">— Nathan</p>
+    </div>
+  </div>
+
+  <script>
+    // ============================================
+    // CONFIG — Add your Kit V4 API key
+    // ============================================
+    const KIT_API_KEY = 'kit_f9f8aa43fb65e0a8de4cd0b73e6fa4c0';
+    const KIT_FORM_ID = '9228823';
+    // ============================================
+
+    const form = document.getElementById('surveyForm');
+    const formContent = document.getElementById('formContent');
+    const thankYou = document.getElementById('thankYou');
+    const errorMsg = document.getElementById('errorMsg');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value.trim();
+      const q1 = document.querySelector('input[name="q1"]:checked');
+      const q2 = document.querySelector('input[name="q2"]:checked');
+      const q3 = document.querySelector('input[name="q3"]:checked');
+      const q4 = document.querySelector('input[name="q4"]:checked');
+      const q5 = document.querySelector('input[name="q5"]:checked');
+
+      if (!email || !q1 || !q2 || !q3 || !q4 || !q5) {
+        errorMsg.classList.add('visible');
+        return;
+      }
+
+      errorMsg.classList.remove('visible');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+
+      try {
+        const response = await fetch(`https://api.kit.com/v4/forms/${KIT_FORM_ID}/subscribers`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${KIT_API_KEY}`
+          },
+          body: JSON.stringify({
+            email_address: email,
+            custom_fields: {
+              purchase_timing: q1.value,
+              time_to_buy: q2.value,
+              discovery_source: q3.value,
+              producer_loyalty: q4.value,
+              biggest_frustration: q5.value
+            }
+          })
+        });
+
+        if (!response.ok) throw new Error('API error');
+
+        formContent.classList.add('hidden');
+        thankYou.classList.add('visible');
+      } catch (err) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send it';
+        errorMsg.textContent = 'Something went wrong. Try again.';
+        errorMsg.classList.add('visible');
+      }
+    });
+  </script>
+</body>
+</html>
