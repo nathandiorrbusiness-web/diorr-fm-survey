@@ -252,6 +252,44 @@
       line-height: 1.6;
     }
 
+    .discount-box {
+      margin-top: 32px;
+      padding: 24px;
+      border: 1px solid rgba(184, 127, 212, 0.3);
+      border-radius: 12px;
+      background: rgba(184, 127, 212, 0.06);
+    }
+
+    .discount-box p {
+      font-size: 14px;
+      color: #a89ab5;
+      margin-bottom: 12px;
+    }
+
+    .discount-code {
+      font-family: 'Bank Gothic', monospace;
+      font-size: 22px;
+      color: #b87fd4;
+      letter-spacing: 3px;
+      padding: 12px 20px;
+      background: rgba(184, 127, 212, 0.1);
+      border-radius: 8px;
+      display: inline-block;
+      user-select: all;
+      cursor: pointer;
+    }
+
+    .discount-code:hover {
+      background: rgba(184, 127, 212, 0.18);
+    }
+
+    .discount-note {
+      font-size: 12px !important;
+      color: #6b6178 !important;
+      margin-top: 10px !important;
+      margin-bottom: 0 !important;
+    }
+
     .form-content.hidden {
       display: none;
     }
@@ -445,7 +483,12 @@
 
     <div class="thank-you" id="thankYou">
       <h2>Appreciate you</h2>
-      <p>This genuinely helps me make better music for you. Talk soon.</p>
+      <p>This genuinely helps me make better music for you.</p>
+      <div class="discount-box">
+        <p>Here's 10% off your next purchase as a thank you.</p>
+        <div class="discount-code" title="Click to select">PPSURVEY10GWFN</div>
+        <p class="discount-note">Use at checkout on BeatStars</p>
+      </div>
       <div class="divider" style="margin-top: 32px;"></div>
       <p style="margin-top: 24px; font-size: 13px;">— Nathan</p>
     </div>
